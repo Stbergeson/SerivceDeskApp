@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SerivceDeskApi.Controllers;
+namespace ServiceDeskApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

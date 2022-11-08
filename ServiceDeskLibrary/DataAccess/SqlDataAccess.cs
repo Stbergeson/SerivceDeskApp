@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 
 namespace ServiceDeskLibrary.DataAccess;
 
-internal class SqlDataAccess : ISqlDataAccess
+public class SqlDataAccess : ISqlDataAccess
 {
 	private readonly IConfiguration _config;
 

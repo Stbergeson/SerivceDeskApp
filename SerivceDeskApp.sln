@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerivceDeskApi", "SerivceDeskApi\SerivceDeskApi.csproj", "{19EA2CC7-C2DC-440B-897C-B92AE7521E97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDeskApi", "SerivceDeskApi\ServiceDeskApi.csproj", "{19EA2CC7-C2DC-440B-897C-B92AE7521E97}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDeskClient", "ServiceDeskClient\ServiceDeskClient.csproj", "{2BF9E749-4DDF-4B2F-9B89-679ACDC9DAB3}"
 EndProject
