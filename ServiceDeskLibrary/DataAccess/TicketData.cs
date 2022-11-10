@@ -51,7 +51,7 @@ public class TicketData : ITicketData
 
     #region POST
     public Task Create(string subject, string body, string assignedId,
-        string status, string requesterId, string createId)
+        string requesterId, string createId)
     {
         return _sql.SaveData<dynamic>(
             "dbo.spTickets_Create",
@@ -60,7 +60,6 @@ public class TicketData : ITicketData
                 Subject = subject,
                 Body = body,
                 AssignedId = assignedId,
-                Status = status,
                 RequesterId = requesterId,
                 CreateId = createId
             },

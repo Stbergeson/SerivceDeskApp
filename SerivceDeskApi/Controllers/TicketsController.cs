@@ -94,9 +94,19 @@ public class TicketsController : ControllerBase
     #region POST
     // POST api/Tickets/Create
     [HttpPost("Create")]
-    public void Post([FromBody] string value)
+    public async Task<ActionResult<TicketModel>> Post([FromBody] TicketModel ticket)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("POST: api/Tickets/Create");
+        try
+        {
+            await _data.Create(ticket.Subject!, ticket.Body!, ticket.AssignedId!, ticket.RequesterId!, "Id of creator");
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The POST call to {ApiPath} failed.", "api/Tickets/Create");
+            return BadRequest();
+        }
     }
     #endregion
 

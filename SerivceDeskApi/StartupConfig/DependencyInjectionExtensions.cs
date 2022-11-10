@@ -18,6 +18,7 @@ public static class DependencyInjectionExtensions
     public static void AddCustomServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
+        builder.Services.AddSingleton<ITicketData, TicketData>();
     }
 
     public static void AddAuthServices(this WebApplicationBuilder builder)

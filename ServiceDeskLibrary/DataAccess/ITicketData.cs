@@ -5,7 +5,7 @@ namespace ServiceDeskLibrary.DataAccess
     public interface ITicketData
     {
         Task ArchiveTicket(bool archived, int ticketId);
-        Task Create(string subject, string body, string assignedId, string status, string requesterId, string createId);
+        Task Create(string subject, string body, string assignedId, string requesterId, string createId);
         Task DeleteTicket(int ticketId);
         Task<List<TicketModel>> GetAllArchived();
         Task<List<TicketModel>> GetAllNonArchived();
