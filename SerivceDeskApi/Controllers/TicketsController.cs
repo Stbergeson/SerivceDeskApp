@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ModelsLibrary.Models;
 using ServiceDeskLibrary.DataAccess;
+using System.Net.Sockets;
 
 namespace ServiceDeskApi.Controllers;
 
@@ -94,7 +95,7 @@ public class TicketsController : ControllerBase
     #region POST
     // POST api/Tickets/Create
     [HttpPost("Create")]
-    public async Task<ActionResult<TicketModel>> Post([FromBody] TicketModel ticket)
+    public async Task<ActionResult> Post([FromBody] TicketModel ticket)
     {
         _logger.LogInformation("POST: api/Tickets/Create");
         try
@@ -120,18 +121,40 @@ public class TicketsController : ControllerBase
 
     // PUT api/Tickets/Update/5/Archive
     [HttpPut("Update/{ticketId}/Archive")]
-    public void Archive(int ticketId, [FromBody] string value)
+    public async Task<ActionResult> Archive(int ticketId, [FromBody] bool archived)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("POST: api/Tickets/Archive");
+        try
+        {
+            await _data.ArchiveTicket(archived, ticketId);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The PUT call to {ApiPath} failed."+$" Setting archive status to {archived} of ticket {ticketId}",
+                "api/Tickets/Archive");
+            return BadRequest();
+        }
     }
     #endregion
 
     #region DELETE
     // DELETE api/Tickets/Delete/5
     [HttpDelete("Delete/{id}")]
-    public void Delete(int id)
+    public async Task<ActionResult> Delete(int ticketId)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("POST: api/Tickets/Delete");
+        try
+        {
+            await _data.DeleteTicket(ticketId);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The DELETE call to {ApiPath} failed. Failed trying to delete ticket {TicketId}",
+                "api/Tickets/Archive", ticketId);
+            return BadRequest();
+        }
     }
     #endregion
 }
