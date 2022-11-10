@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using ModelsLibrary.Models;
+using ServiceDeskLibrary.DataAccess;
 
 namespace ServiceDeskApi.Controllers;
 
@@ -6,33 +9,85 @@ namespace ServiceDeskApi.Controllers;
 [ApiController]
 public class TicketsController : ControllerBase
 {
+    private readonly ITicketData _data;
+    private readonly ILogger<TicketsController> _logger;
+
+    public TicketsController(ITicketData data, ILogger<TicketsController> logger)
+    {
+        _data = data;
+        _logger = logger;
+    }
+
     #region GET
     // GET: api/Tickets/Get/5
     [HttpGet("Get/{ticketId}")]
-    public IEnumerable<string> Get(int ticketId)
+    public async Task<ActionResult<TicketModel>> Get(int ticketId)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("GET: api/Tickets/Get/{TicketId}", ticketId);
+        try
+        {
+            var output = await _data.GetOne(ticketId);
+
+            return Ok(output);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The GET call to {ApiPath} failed. The Id was {TicketId}",
+                "api/Tickets/Get/Id", ticketId);
+            return BadRequest();
+        }
     }
 
     // GET api/Tickets/Get/All
     [HttpGet("Get/All")]
-    public string GetAll()
+    public async Task<ActionResult<TicketModel>> GetAll()
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("GET: api/Tickets/Get/All");
+        try
+        {
+            var output = await _data.GetAllNonArchived();
+            return Ok(output);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "The GET call to {ApiPath} failed.", "api/Tickets/Get/All");
+            return BadRequest();
+        }
     }
 
     // GET api/Tickets/Get/All/04720e88-50d4-47eb-87e9-f88a320ddc66
     [HttpGet("Get/All/{userId}")]
-    public string GetAllByUser(string userId)
+    public async Task<ActionResult<TicketModel>> GetAllByUser(string userId)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("GET: api/Tickets/Get/All/{UserId}",userId);
+        try
+        {
+            var output = await _data.GetAllNonArchivedByUser(userId);
+            return Ok(output);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The GET call to {ApiPath} failed. The userId was {userId}",
+                "api/Tickets/Get/All/UserId", userId);
+            return BadRequest();
+        }
     }
 
     // GET api/Tickets/Get/Archived
     [HttpGet("Get/All/Archived")]
-    public string GetAllArchived()
+    public async Task<ActionResult<TicketModel>> GetAllArchived()
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("GET: api/Tickets/Get/All/Archived");
+        try
+        {
+            var output = await _data.GetAllArchived();
+            return Ok(output);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The GET call to {ApiPath} failed.", "api/Tickets/Get/All/Archived");
+            return BadRequest();
+        }
     }
     #endregion
 
