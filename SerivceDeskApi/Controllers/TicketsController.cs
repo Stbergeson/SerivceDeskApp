@@ -114,16 +114,28 @@ public class TicketsController : ControllerBase
     #region PUT
     // PUT api/Tickets/Update/5
     [HttpPut("Update/{ticketId}")]
-    public void Update(int ticketId, [FromBody] string value)
+    public async Task<ActionResult<TicketModel>> Update(int ticketId, [FromBody] TicketModel ticket)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation($"POST: api/Tickets/Update/{ticketId}");
+        try
+        {
+            await _data.UpdateTicket(ticket.Subject!, ticket.Body!, ticket.AssignedId!,
+                ticket.Status!, ticket.RequesterId!, ticket.Id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "The PUT call to {ApiPath} failed " + "when updating ticket ID {ticketId}",
+                "api/Tickets/Update/{ticketId}");
+            return BadRequest();
+        }
     }
 
     // PUT api/Tickets/Update/5/Archive
     [HttpPut("Update/{ticketId}/Archive")]
     public async Task<ActionResult> Archive(int ticketId, [FromBody] bool archived)
     {
-        _logger.LogInformation("POST: api/Tickets/Archive");
+        _logger.LogInformation("POST: api/Tickets/{TicketId}/Archive", ticketId);
         try
         {
             await _data.ArchiveTicket(archived, ticketId);
@@ -132,7 +144,7 @@ public class TicketsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "The PUT call to {ApiPath} failed."+$" Setting archive status to {archived} of ticket {ticketId}",
-                "api/Tickets/Archive");
+                $"api/Tickets/{ticketId}/Archive");
             return BadRequest();
         }
     }
