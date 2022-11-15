@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
+using ModelsLibrary.Models;
 using ServiceDeskClient.Areas.Identity;
 using ServiceDeskClient.Data;
 
@@ -19,6 +20,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+builder.Services.AddScoped<TokenModel>();
+builder.Services.AddHttpClient("api", opts =>
+{
+    opts.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiUrl"));
+});
+
 
 var app = builder.Build();
 
