@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using NuGet.Protocol.Plugins;
 
 namespace ServiceDeskClient.Areas.Identity.Pages.Account
 {
@@ -21,11 +22,14 @@ namespace ServiceDeskClient.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IHttpClientFactory _factory;
+        public record AuthenticationData(string? Username, string? Password);
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IHttpClientFactory factory)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _factory = factory;
         }
 
         /// <summary>
@@ -114,6 +118,19 @@ namespace ServiceDeskClient.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    //set cookie options
+                    CookieOptions cookieOptions = new CookieOptions();
+                    cookieOptions.Expires = DateTime.Now.AddMinutes(15);
+                    cookieOptions.Secure = true;
+
+                    //grab api token for user
+                    var client = _factory.CreateClient("api");
+                    AuthenticationData login = new(Input.Email, Input.Password);
+                    var info = await client.PostAsJsonAsync<AuthenticationData>("Authentication/token", login);
+                    string token = await info.Content.ReadAsStringAsync();
+
+                    Response.Cookies.Append("ApiBearerToken", token, cookieOptions);
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
