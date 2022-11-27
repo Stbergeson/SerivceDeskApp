@@ -19,6 +19,7 @@ public static class DependencyInjectionExtensions
     {
         builder.Services.AddSingleton<ISqlDataAccess, SqlDataAccess>();
         builder.Services.AddSingleton<ITicketData, TicketData>();
+        builder.Services.AddSingleton<IUserData, UserData>();
     }
 
     public static void AddAuthServices(this WebApplicationBuilder builder)

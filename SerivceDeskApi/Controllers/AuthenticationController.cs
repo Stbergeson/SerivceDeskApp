@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using ServiceDeskLibrary.DataAccess;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -12,11 +14,13 @@ namespace ServiceDeskApi.Controllers;
 public class AuthenticationController : ControllerBase
 {
 	private readonly IConfiguration _config;
+    private readonly IUserData _data;
 
-	public AuthenticationController(IConfiguration config)
+    public AuthenticationController(IConfiguration config, IUserData data)
 	{
 		_config = config;
-	}
+        _data = data;
+    }
 
 	public record AuthenticationData(string? UserName, string? Password);
 	public record UserData(string Id, string UserName, string FirstName, string LastName);
@@ -62,32 +66,21 @@ public class AuthenticationController : ControllerBase
 
     private UserData? ValidateCredentials(AuthenticationData data)
     {
-        //DO NOT USE THIS CODE IN PRODUCTION - REPLACE WITH CALL TO AUTH SYSTEM
-        if (CompareValues(data.UserName, "sclaus") &&
-           CompareValues(data.Password, "password"))
+        IPasswordHasher<object> _hasher;
+        _hasher = new PasswordHasher<object>();
+        string hashedPass = _data.GetUserPasswordHash(data.UserName!).Result;
+        if (hashedPass != null)
         {
-            return new UserData("1", "Santa", "Claus", data.UserName!);
-        }
+            var passResult = _hasher.VerifyHashedPassword(new { }, hashedPass, data.Password);
 
-        if (CompareValues(data.UserName, "gwashington") &&
-           CompareValues(data.Password, "password"))
-        {
-            return new UserData("2", "George", "Washington", data.UserName!);
+            if (passResult == PasswordVerificationResult.Success)
+            {
+                return new UserData("", "", "", data.UserName!);
+            }
         }
 
         return null;
 
     }
 
-    private bool CompareValues(string? actual, string expected)
-    {
-        if (actual != null)
-        {
-            if (actual.Equals(expected))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 }
