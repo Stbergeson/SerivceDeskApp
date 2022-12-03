@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Plugins;
+using Newtonsoft.Json;
 
 namespace ServiceDeskClient.Areas.Identity.Pages.Account
 {
@@ -24,6 +25,7 @@ namespace ServiceDeskClient.Areas.Identity.Pages.Account
         private readonly ILogger<LoginModel> _logger;
         private readonly IHttpClientFactory _factory;
         public record AuthenticationData(string? Username, string? Password);
+        public record Tokens(string BearerToken, string RefreshToken);
 
         public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IHttpClientFactory factory)
         {
@@ -128,8 +130,13 @@ namespace ServiceDeskClient.Areas.Identity.Pages.Account
                     AuthenticationData login = new(Input.Email, Input.Password);
                     var info = await client.PostAsJsonAsync<AuthenticationData>("Authentication/token", login);
                     string token = await info.Content.ReadAsStringAsync();
+                    Tokens tokens = JsonConvert.DeserializeObject<Tokens>(token);
 
-                    Response.Cookies.Append("ApiBearerToken", token, cookieOptions);
+                    Response.Cookies.Append("ApiBearerToken", tokens.BearerToken, cookieOptions);
+
+                    cookieOptions.Expires = DateTime.Now.AddDays(7);
+                    Response.Cookies.Append("ApiRefreshToken", tokens.RefreshToken, cookieOptions);
+
 
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);

@@ -24,10 +24,12 @@ public class AuthenticationController : ControllerBase
 
 	public record AuthenticationData(string? UserName, string? Password);
 	public record UserData(string Id, string UserName, string FirstName, string LastName);
+    public record Tokens(string BearerToken, string RefreshToken);
+    public record RefreshToken(string Token, DateTime Expiration);
 
 	[HttpPost("token")]
 	[AllowAnonymous]
-	public ActionResult<string> Authenticate([FromBodyAttribute] AuthenticationData data)
+	public ActionResult<Tokens> Authenticate([FromBodyAttribute] AuthenticationData data)
 	{
 		var user = ValidateCredentials(data);
 
@@ -35,8 +37,8 @@ public class AuthenticationController : ControllerBase
 			return Unauthorized();
 
 		var token = GenerateToken(user);
-
-		return Ok(token);
+        Tokens tokens = new(GenerateToken(user), GenerateRefreshToken(user));
+		return Ok(tokens);
 	}
 
 	private string GenerateToken(UserData user)
@@ -62,6 +64,13 @@ public class AuthenticationController : ControllerBase
             signingCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private string GenerateRefreshToken(UserData user)
+    {
+        RefreshToken token = new(Guid.NewGuid().ToString(), DateTime.Now.AddDays(7));
+        //write to db
+        return token.Token;
     }
 
     private UserData? ValidateCredentials(AuthenticationData data)
