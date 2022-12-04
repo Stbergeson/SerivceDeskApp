@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ServiceDeskLibrary.DataAccess;
+using ServiceDeskLibrary.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -25,7 +26,6 @@ public class AuthenticationController : ControllerBase
 	public record AuthenticationData(string? UserName, string? Password);
 	public record UserData(string Id, string UserName, string FirstName, string LastName);
     public record Tokens(string BearerToken, string RefreshToken);
-    public record RefreshToken(string Token, DateTime Expiration);
 
 	[HttpPost("token")]
 	[AllowAnonymous]
@@ -69,7 +69,7 @@ public class AuthenticationController : ControllerBase
     private string GenerateRefreshToken(UserData user)
     {
         RefreshToken token = new(Guid.NewGuid().ToString(), DateTime.Now.AddDays(7));
-        //write to db
+        _data.AddRefreshToken(token, user.UserName);
         return token.Token;
     }
 
@@ -84,7 +84,7 @@ public class AuthenticationController : ControllerBase
 
             if (passResult == PasswordVerificationResult.Success)
             {
-                return new UserData("", "", "", data.UserName!);
+                return new UserData("", data.UserName!, "", "");
             }
         }
 

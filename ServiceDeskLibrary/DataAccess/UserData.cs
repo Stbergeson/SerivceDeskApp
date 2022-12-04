@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServiceDeskLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,13 @@ public class UserData : IUserData
             "Default");
 
         return results.FirstOrDefault()!;
+    }
+
+    public Task AddRefreshToken(RefreshToken token, string user)
+    {
+        return _sql.SaveData<dynamic>(
+            "dbo.spUsers_PostRefreshToken",
+            new { token = token.Token, expiration = token.Expiration, userName = user },
+            "Default");
     }
 }
