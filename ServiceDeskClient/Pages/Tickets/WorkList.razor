@@ -1,0 +1,59 @@
+﻿@page "/WorkList"
+@using System.Net.Http.Headers
+@using System.Web
+@using ModelsLibrary.Models
+
+@inject IHttpClientFactory _factory
+
+<h3>WorkList</h3>
+<table>
+    <tr>
+        <th>Ticket ID</th>
+        <th>Subject</th>
+        <th>Requester</th>
+        <th>Technician</th>
+    </tr>
+    
+    @foreach(var ticket in tickets)
+    {
+        <tr>
+            <td>@ticket.Id</td>
+            <td>@ticket.Subject</td>
+            <td>@ticket.RequesterId</td>
+            <td>@ticket.AssignedId</td>
+        </tr>
+    }
+    
+</table>
+
+@code {
+
+    private HttpClient? client;
+    private HttpContextAccessor _httpContextAccessor = new();
+
+    private List<TicketModel> tickets = new();
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        string bearerToken = _httpContextAccessor.HttpContext!.Request.Cookies["apiBearerToken"]!;
+        client = _factory.CreateClient("api");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+        GetTickets();
+    }
+
+    private async void GetTickets()
+    {
+        errorMessage = "";
+        try
+        {
+            tickets = await client!.GetFromJsonAsync<List<TicketModel>>("Tickets/Get/All");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+}
