@@ -36,12 +36,22 @@ public class AuthenticationController : ControllerBase
 		if (user == null)
 			return Unauthorized();
 
-		var token = GenerateToken(user);
         Tokens tokens = new(GenerateToken(user), GenerateRefreshToken(user));
 		return Ok(tokens);
 	}
 
-	private string GenerateToken(UserData user)
+    [HttpPost("token/refresh")]
+    [AllowAnonymous]
+    public ActionResult<Tokens> Refresh([FromBodyAttribute] AuthenticationData data)
+    {
+        //validate refresh cred
+        //
+        var user = new UserData("", data.UserName!, "", "");
+        Tokens tokens = new(GenerateToken(user), GenerateRefreshToken(user));
+        return Ok(tokens);
+    }
+
+    private string GenerateToken(UserData user)
 	{
 		var secretKey = new SymmetricSecurityKey(
 			Encoding.ASCII.GetBytes(
