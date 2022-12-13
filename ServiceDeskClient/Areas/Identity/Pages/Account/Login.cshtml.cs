@@ -122,7 +122,7 @@ namespace ServiceDeskClient.Areas.Identity.Pages.Account
                 {
                     //set cookie options
                     CookieOptions cookieOptions = new CookieOptions();
-                    cookieOptions.Expires = DateTime.Now.AddMinutes(15);
+                    cookieOptions.Expires = DateTime.Now.AddMinutes(1);
                     cookieOptions.Secure = true;
 
                     //grab api token for user

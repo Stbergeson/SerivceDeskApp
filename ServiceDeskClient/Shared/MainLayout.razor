@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager nav
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 <PageTitle>ServiceDeskClient</PageTitle>
 
@@ -22,15 +24,36 @@
 
 @code {
 
-    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    [CascadingParameter] protected Task<AuthenticationState> AuthState { get; set; }
+
+    private HttpContextAccessor _httpContextAccessor = new();
 
     protected async override Task OnInitializedAsync()
     {
         base.OnInitialized();
-        var user = (await AuthStat).User;
+        var user = (await AuthState).User;
+
+        //redirect user if not logged in
         if (!user.Identity.IsAuthenticated)
         {
             nav.NavigateTo($"/Identity/Account/Login");
+        }
+
+        //if user is logged in confirm their tokens, otherwise log them out
+        string bearerToken = _httpContextAccessor.HttpContext!.Request.Cookies["apiBearerToken"]!;
+        string refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies["apiRefreshToken"]!;
+
+        if(bearerToken == null)
+        {
+            if(refreshToken != null)
+            {
+               
+
+            }else{
+                //sign the user out and redirect to login
+                await SignInManager.SignOutAsync();
+                nav.NavigateTo($"/Identity/Account/Login");
+            }
         }
     }
 }
