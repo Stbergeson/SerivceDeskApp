@@ -15,13 +15,12 @@ main {
 .top-row {
     background-color: #f7f7f7;
     border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
     height: 3.5rem;
     display: flex;
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row .btn-link {
+    .top-row ::deep a, .top-row .btn-link, .top-row span {
         white-space: nowrap;
         margin-left: 1.5rem;
     }
@@ -29,6 +28,24 @@ main {
     .top-row a:first-child {
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+
+    .top-row div:nth-child(2) {
+        margin-left: auto;
+    }
+
+    .top-row span{
+        font-size: 1.5rem;
+
+    }
+
+    .top-row span:hover {
+        border-radius: 25px;
+        background: blue;
+        padding: 20px;
+        width: 20px;
+        height: 15px;
     }
 
 @media (max-width: 640.98px) {
