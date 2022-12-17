@@ -11,6 +11,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceDeskLibrary", "Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsLibrary", "ModelsLibrary\ModelsLibrary.csproj", "{7898BFB5-64EE-4833-80DB-E70A7525ED5F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{E554948F-F701-4287-AD08-F05B6609FEF6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StoredProcedures", "StoredProcedures", "{2B5D68A9-BBBF-4A74-B29A-F8BEC531EB92}"
+	ProjectSection(SolutionItems) = preProject
+		dbo.spTicketsGetAllNonArchivedByUser.sql = dbo.spTicketsGetAllNonArchivedByUser.sql
+		dbo.spTickets_ArchiveTicket.sql = dbo.spTickets_ArchiveTicket.sql
+		dbo.spTickets_Create.sql = dbo.spTickets_Create.sql
+		dbo.spTickets_DeleteTicket.sql = dbo.spTickets_DeleteTicket.sql
+		dbo.spTickets_GetAllArchived.sql = dbo.spTickets_GetAllArchived.sql
+		dbo.spTickets_GetAllNonArchived.sql = dbo.spTickets_GetAllNonArchived.sql
+		dbo.spTickets_GetOne.sql = dbo.spTickets_GetOne.sql
+		dbo.spTickets_UpdateTicket.sql = dbo.spTickets_UpdateTicket.sql
+		dbo.spUsers_GetPasswordHash.sql = dbo.spUsers_GetPasswordHash.sql
+		dbo.spUsers_PostRefreshToken.sql = dbo.spUsers_PostRefreshToken.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +52,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2B5D68A9-BBBF-4A74-B29A-F8BEC531EB92} = {E554948F-F701-4287-AD08-F05B6609FEF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3900A16-071D-4CBE-A807-CF758CA16AFF}
