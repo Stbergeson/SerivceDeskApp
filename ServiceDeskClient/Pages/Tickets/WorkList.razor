@@ -31,7 +31,7 @@
     private HttpClient? client;
     private HttpContextAccessor _httpContextAccessor = new();
 
-    private List<TicketModel> tickets = new();
+    private List<Ticket>? tickets = new();
     private string? errorMessage;
 
     protected override void OnInitialized()
@@ -47,7 +47,7 @@
         errorMessage = "";
         try
         {
-            tickets = await client!.GetFromJsonAsync<List<TicketModel>>("Tickets/Get/All");
+            tickets = await client!.GetFromJsonAsync<List<Ticket>>("Tickets/Get/All");
         }
         catch (Exception ex)
         {

@@ -13,33 +13,33 @@ public class TicketData : ITicketData
 
     #region GET
 
-    public Task<List<TicketModel>> GetAllArchived()
+    public Task<List<Ticket>> GetAllArchived()
     {
-        return _sql.LoadData<TicketModel, dynamic>(
+        return _sql.LoadData<Ticket, dynamic>(
             "dbo.spTickets_GetAllArchived",
             new { },
             "Default");
     }
 
-    public Task<List<TicketModel>> GetAllNonArchived()
+    public Task<List<Ticket>> GetAllNonArchived()
     {
-        return _sql.LoadData<TicketModel, dynamic>(
+        return _sql.LoadData<Ticket, dynamic>(
             "dbo.spTickets_GetAllNonArchived",
             new { },
             "Default");
     }
 
-    public Task<List<TicketModel>> GetAllNonArchivedByUser(string userId)
+    public Task<List<Ticket>> GetAllNonArchivedByUser(string userId)
     {
-        return _sql.LoadData<TicketModel, dynamic>(
+        return _sql.LoadData<Ticket, dynamic>(
             "dbo.spTickets_GetAllNonArchivedByUser",
             new { UserId = userId },
             "Default");
     }
 
-    public async Task<TicketModel?> GetOne(int ticketId)
+    public async Task<Ticket?> GetOne(int ticketId)
     {
-        var results = await _sql.LoadData<TicketModel, dynamic>(
+        var results = await _sql.LoadData<Ticket, dynamic>(
             "dbo.spTickets_GetOne",
             new { TicketId = ticketId },
             "Default");

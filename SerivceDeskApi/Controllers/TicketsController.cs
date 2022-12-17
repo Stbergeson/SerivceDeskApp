@@ -22,7 +22,7 @@ public class TicketsController : ControllerBase
     #region GET
     // GET: api/Tickets/Get/5
     [HttpGet("Get/{ticketId}")]
-    public async Task<ActionResult<TicketModel>> Get(int ticketId)
+    public async Task<ActionResult<Ticket>> Get(int ticketId)
     {
         _logger.LogInformation("GET: api/Tickets/Get/{TicketId}", ticketId);
         try
@@ -41,7 +41,7 @@ public class TicketsController : ControllerBase
 
     // GET api/Tickets/Get/All
     [HttpGet("Get/All")]
-    public async Task<ActionResult<TicketModel>> GetAll()
+    public async Task<ActionResult<Ticket>> GetAll()
     {
         _logger.LogInformation("GET: api/Tickets/Get/All");
         try
@@ -58,7 +58,7 @@ public class TicketsController : ControllerBase
 
     // GET api/Tickets/Get/All/04720e88-50d4-47eb-87e9-f88a320ddc66
     [HttpGet("Get/All/{userId}")]
-    public async Task<ActionResult<TicketModel>> GetAllByUser(string userId)
+    public async Task<ActionResult<Ticket>> GetAllByUser(string userId)
     {
         _logger.LogInformation("GET: api/Tickets/Get/All/{UserId}",userId);
         try
@@ -76,7 +76,7 @@ public class TicketsController : ControllerBase
 
     // GET api/Tickets/Get/Archived
     [HttpGet("Get/All/Archived")]
-    public async Task<ActionResult<TicketModel>> GetAllArchived()
+    public async Task<ActionResult<Ticket>> GetAllArchived()
     {
         _logger.LogInformation("GET: api/Tickets/Get/All/Archived");
         try
@@ -95,12 +95,12 @@ public class TicketsController : ControllerBase
     #region POST
     // POST api/Tickets/Create
     [HttpPost("Create")]
-    public async Task<ActionResult> Post([FromBody] TicketModel ticket)
+    public async Task<ActionResult> Post([FromBody] Ticket ticket)
     {
         _logger.LogInformation("POST: api/Tickets/Create");
         try
         {
-            await _data.Create(ticket.Subject!, ticket.Body!, ticket.AssignedId!, ticket.RequesterId!, "Id of creator");
+            await _data.Create(ticket.Subject!, ticket.Body!, ticket.AssignedId.ToString(), ticket.RequesterId.ToString(), "Id of creator");
             return Ok();
         }
         catch (Exception ex)
@@ -114,13 +114,13 @@ public class TicketsController : ControllerBase
     #region PUT
     // PUT api/Tickets/Update/5
     [HttpPut("Update/{ticketId}")]
-    public async Task<ActionResult<TicketModel>> Update(int ticketId, [FromBody] TicketModel ticket)
+    public async Task<ActionResult<Ticket>> Update(int ticketId, [FromBody] Ticket ticket)
     {
         _logger.LogInformation($"POST: api/Tickets/Update/{ticketId}");
         try
         {
-            await _data.UpdateTicket(ticket.Subject!, ticket.Body!, ticket.AssignedId!,
-                ticket.Status!, ticket.RequesterId!, ticket.Id);
+            await _data.UpdateTicket(ticket.Subject!, ticket.Body!, ticket.AssignedId.ToString(),
+                ticket.Status!, ticket.RequesterId.ToString(), ticket.Id);
             return Ok();
         }
         catch (Exception ex)
