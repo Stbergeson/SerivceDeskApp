@@ -12,6 +12,8 @@
     <link href="css/site.css" rel="stylesheet" />
     <link href="ServiceDeskClient.styles.css" rel="stylesheet" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet"
 </head>
 <body>
     @RenderBody()
@@ -28,5 +30,8 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+    <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
 </body>
 </html>
