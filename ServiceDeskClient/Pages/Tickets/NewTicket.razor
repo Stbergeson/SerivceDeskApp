@@ -1,75 +1,58 @@
-﻿<h3>NewTicket</h3>
+﻿@page "/new"
+@using ModelsLibrary.Models;
+@using ServiceDeskClient.Pages.Tickets.Components;
 
-<BlazoredTextEditor @ref="@QuillHtml">
-    <ToolbarContent>
-        <select class="ql-header">
-            <option selected=""></option>
-            <option value="1"></option>
-            <option value="2"></option>
-            <option value="3"></option>
-            <option value="4"></option>
-            <option value="5"></option>
-        </select>
-        <span class="ql-formats">
-            <button class="ql-bold"></button>
-            <button class="ql-italic"></button>
-            <button class="ql-underline"></button>
-            <button class="ql-strike"></button>
-        </span>
-        <span class="ql-formats">
-            <select class="ql-color"></select>
-            <select class="ql-background"></select>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-list" value="ordered"></button>
-            <button class="ql-list" value="bullet"></button>
-        </span>
-        <span class="ql-formats">
-            <button class="ql-link"></button>
-        </span>
-    </ToolbarContent>
-    <EditorContent>
-        <h4>This Toolbar works with HTML</h4>
-        <a href="http://BlazorHelpWebsite.com">
-        BlazorHelpWebsite.com</a>
-    </EditorContent>
-</BlazoredTextEditor>
+<EditForm Model="@ticket" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Subject</label>
+        <div class="col-sm-10">
+            <InputText id="subject" @bind-Value="ticket.Subject" />
+        </div>        
+    </div>
+    
 
-<br />
-<button class="btn btn-primary"
-        @onclick="GetHTML">
-    Get HTML
-</button>
-<button class="btn btn-primary"
-        @onclick="SetHTML">
-    Set HTML
-</button>
-<br />
-<div>
-    <br />
-    @((MarkupString)QuillHTMLContent)
-    @QuillHTMLContent
-</div>
-<br />
+    
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Status</label>
+        <div class="col-sm-10">
+            <InputSelect @bind-Value="ticket.Status">
+                <option></option>
+            </InputSelect>
+        </div>
+    </div>
 
-@code {
+    
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Technician</label>
+        <div class="col-sm-10">
+            <InputSelect @bind-Value="ticket.AssignedId">
+                <option></option>
+            </InputSelect>
+        </div>
+    </div>
 
-    BlazoredTextEditor? QuillHtml;
-    string? QuillHTMLContent;
+    
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Description</label>
+        <div class="col-sm-10">
+            <TextEditorComponent @ref="textEditor" />
+        </div>
+        
+    </div>
 
-    public async void GetHTML()
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+
+@code{
+    Ticket ticket = new();
+    TextEditorComponent? textEditor;
+
+    private async void HandleValidSubmit()
     {
-        QuillHTMLContent = await this.QuillHtml.GetHTML();
-        StateHasChanged();
-    }
-
-    public async void SetHTML()
-    {
-        string QuillContent =
-            @"<a href='http://BlazorHelpWebsite.com/'>" +
-            "<img src='images/BlazorHelpWebsite.gif' /></a>";
-
-        await this.QuillHtml.LoadHTMLContent(QuillContent);
-        StateHasChanged();
+        ticket.Body = await textEditor.GetHTML();
     }
 }
