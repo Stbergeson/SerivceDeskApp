@@ -30,12 +30,6 @@
     </EditorContent>
 </BlazoredTextEditor>
 
-<div>
-    <br />
-    @((MarkupString)QuillHTMLContent)
-    @QuillHTMLContent
-</div>
-<br />
 
 @code {
     BlazoredTextEditor? QuillHtml;
@@ -44,7 +38,8 @@
 
     public async Task<string> GetHTML()
     {
-        return await this.QuillHtml.GetHTML();
+        var content = await this.QuillHtml.GetHTML();
+        return content == "<p><br></p>" ? null : content;
     }
 
 }

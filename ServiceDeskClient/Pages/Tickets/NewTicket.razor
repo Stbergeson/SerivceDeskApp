@@ -1,58 +1,90 @@
 ﻿@page "/new"
 @using ModelsLibrary.Models;
 @using ServiceDeskClient.Pages.Tickets.Components;
+@using System.ComponentModel.DataAnnotations;
+@using System.Text.RegularExpressions;
 
-<EditForm Model="@ticket" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Subject</label>
-        <div class="col-sm-10">
-            <InputText id="subject" @bind-Value="ticket.Subject" />
-        </div>        
-    </div>
-    
 
-    
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Status</label>
-        <div class="col-sm-10">
-            <InputSelect @bind-Value="ticket.Status">
-                <option></option>
-            </InputSelect>
-        </div>
-    </div>
+<MudGrid>
+    <MudItem lg="12" xs="12" sm="12">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form">
+                <MudAutocomplete T="string" Label="Status" @bind-Value="ticket.Status" SearchFunc="@SearchStatus"
+                                 ResetValueOnEmptyText="true"
+                                 CoerceText="true" CoerceValue="false" />
 
-    
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Technician</label>
-        <div class="col-sm-10">
-            <InputSelect @bind-Value="ticket.AssignedId">
-                <option></option>
-            </InputSelect>
-        </div>
-    </div>
+                
+                <MudAutocomplete T="User" Label="Technician" @bind-Value="requester" @bind-Text="(requester.FirstName)" SearchFunc="@SearchRequester"
+                                 ResetValueOnEmptyText="true"
+                                 CoerceText="true" CoerceValue="false"/>
 
-    
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Description</label>
-        <div class="col-sm-10">
-            <TextEditorComponent @ref="textEditor" />
-        </div>
-        
-    </div>
+                <MudTextField T="string" Label="Subject" Required="true" RequiredError="Subject is required!" @bind-Value="ticket.Subject" />
+                
+                <MudItem @bind-Value="@ticket.Body">
+                    <TextEditorComponent @ref="textEditor" />
+                    <MudTextField hidden="@true" T="string" Required="true" RequiredError="Description is required!" @bind-Value="ticket.Body" />
+                </MudItem>
+            </MudForm>
 
-    <button type="submit">Submit</button>
-</EditForm>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
+            </MudCardActions>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 
 
 @code{
-    Ticket ticket = new();
-    TextEditorComponent? textEditor;
+    private Ticket ticket = new();
+    private TextEditorComponent? textEditor;
+    private string[] errors = { };
+    private MudForm? form;
+    private List<string> statuses;
+    private List<User> requesters, technicians;
+    private User requester;
+    [Inject] ISnackbar Snackbar { get; set; }
+
+    protected override void OnInitialized()
+    {
+        statuses = new();
+        requesters = new();
+        technicians = new();
+        statuses.Add("Open");
+        statuses.Add("In Progress");
+        statuses.Add("Cancelled");
+        statuses.Add("Closed");
+    }
 
     private async void HandleValidSubmit()
     {
         ticket.Body = await textEditor.GetHTML();
     }
+
+    private async Task<IEnumerable<string>> SearchStatus(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return statuses;
+        return statuses.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<User>> SearchRequester(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return requesters;
+        return requesters.Where(x => x.Name().Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task Submit()
+    {
+        ticket.Body = await textEditor.GetHTML();
+        StateHasChanged();
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            Snackbar.Add("Submited!");
+        }
+    }
+
 }

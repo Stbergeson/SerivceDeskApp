@@ -11,7 +11,7 @@ namespace ServiceDeskClient.Data
         {
         }
 
-        public DbSet<Requester> Requesters { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketNote> TicketNotes { get; set; }
     }
