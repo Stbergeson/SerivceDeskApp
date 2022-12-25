@@ -13,6 +13,6 @@ public class User
 
     public string Name()
     {
-        return (FirstName + LastName == null) ? "Unassigned" : FirstName + LastName;
+        return $"{LastName}, {FirstName}";
     }
 }

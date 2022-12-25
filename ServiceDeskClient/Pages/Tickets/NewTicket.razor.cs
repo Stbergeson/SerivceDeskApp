@@ -9,24 +9,24 @@ public partial class NewTicket
 {
     private Ticket ticket = new();
     private TextEditorComponent? textEditor;
-    private string[] errors = { };
     private MudForm? form;
     private List<string> statuses;
     private List<User> requesters, technicians;
     private User requester;
+    private User technician;
     [Inject] ISnackbar Snackbar { get; set; }
 
     protected override void OnInitialized()
     {
-        requester = new() { Id = -1 };
         statuses = new();
         requesters = new();
+        technicians = new();
         for (int i = 0; i < 10; i++)
         {
             User req = new() { Id = i, FirstName = $"Name{i}", LastName = "LastName" };
             requesters.Add(req);
+            technicians.Add(req);
         }
-        technicians = new();
         statuses.Add("Open");
         statuses.Add("In Progress");
         statuses.Add("Cancelled");
@@ -50,6 +50,13 @@ public partial class NewTicket
         if (string.IsNullOrEmpty(value))
             return requesters;
         return requesters.Where(x => x.Name().Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<User>> SearchTechnician(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return technicians;
+        return technicians.Where(x => x.Name().Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private async Task Submit()

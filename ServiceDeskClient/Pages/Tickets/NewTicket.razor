@@ -1,8 +1,6 @@
 ﻿@page "/new"
 @using ModelsLibrary.Models;
 @using ServiceDeskClient.Pages.Tickets.Components;
-@using System.ComponentModel.DataAnnotations;
-@using System.Text.RegularExpressions;
 
 
 <MudGrid>
@@ -14,7 +12,11 @@
                                 CoerceText="true" CoerceValue="false" />
 
 
-                <MudAutocomplete T="User" Label="Technician" @bind-Value="requester" ToStringFunc="requester => (requester != null ? requester.Name() : null)" SearchFunc="@SearchRequester"
+                <MudAutocomplete T="User" Label="Technician" @bind-Value="technician" ToStringFunc="technicians => (technicians != null ? technicians.Name() : null)" SearchFunc="@SearchTechnician"
+                                ResetValueOnEmptyText="true"
+                                CoerceText="true" CoerceValue="false"/>
+
+                <MudAutocomplete T="User" Label="Requester" @bind-Value="requester" ToStringFunc="requester => (requester != null ? requester.Name() : null)" SearchFunc="@SearchRequester"
                                 ResetValueOnEmptyText="true"
                                 CoerceText="true" CoerceValue="false"/>
 
