@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ModelsLibrary.Models;
 using ServiceDeskLibrary.DataAccess;
@@ -95,12 +96,13 @@ public class TicketsController : ControllerBase
     #region POST
     // POST api/Tickets/Create
     [HttpPost("Create")]
+    [AllowAnonymous]
     public async Task<ActionResult> Post([FromBody] Ticket ticket)
     {
         _logger.LogInformation("POST: api/Tickets/Create");
         try
         {
-            await _data.Create(ticket.Subject!, ticket.Body!, ticket.AssignedId.ToString(), ticket.RequesterId.ToString(), "Id of creator");
+            await _data.Create(ticket.Subject!, ticket.Body!, ticket.AssignedId, ticket.RequesterId, ticket.CreateId, ticket.Status);
             return Ok();
         }
         catch (Exception ex)
@@ -119,8 +121,8 @@ public class TicketsController : ControllerBase
         _logger.LogInformation($"POST: api/Tickets/Update/{ticketId}");
         try
         {
-            await _data.UpdateTicket(ticket.Subject!, ticket.Body!, ticket.AssignedId.ToString(),
-                ticket.Status!, ticket.RequesterId.ToString(), ticket.Id);
+            await _data.UpdateTicket(ticket.Subject!, ticket.Body!, ticket.AssignedId,
+                ticket.Status!, ticket.RequesterId, ticket.Id);
             return Ok();
         }
         catch (Exception ex)

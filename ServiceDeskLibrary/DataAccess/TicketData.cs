@@ -50,8 +50,8 @@ public class TicketData : ITicketData
     #endregion
 
     #region POST
-    public Task Create(string subject, string body, string assignedId,
-        string requesterId, string createId)
+    public Task Create(string subject, string body, int assignedId,
+        int requesterId, string createId, string status)
     {
         return _sql.SaveData<dynamic>(
             "dbo.spTickets_Create",
@@ -61,7 +61,8 @@ public class TicketData : ITicketData
                 Body = body,
                 AssignedId = assignedId,
                 RequesterId = requesterId,
-                CreateId = createId
+                CreateId = createId,
+                Status = status
             },
             "Default");
     }
@@ -69,8 +70,8 @@ public class TicketData : ITicketData
     #endregion
 
     #region PUT
-    public Task UpdateTicket(string subject, string body, string assignedId,
-        string status, string requesterId, int ticketId)
+    public Task UpdateTicket(string subject, string body, int assignedId,
+        string status, int requesterId, int ticketId)
     {
         return _sql.SaveData<dynamic>(
             "dbo.spTickets_UpdateTicket",

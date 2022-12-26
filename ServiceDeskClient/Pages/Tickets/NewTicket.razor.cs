@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using ModelsLibrary.Models;
 using MudBlazor;
 using ServiceDeskClient.Pages.Tickets.Components;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace ServiceDeskClient.Pages.Tickets;
 
@@ -15,9 +19,14 @@ public partial class NewTicket
     private User requester;
     private User technician;
     [Inject] ISnackbar Snackbar { get; set; }
+    [Inject] IHttpClientFactory _factory { get; set; }
+    [Inject] AuthenticationStateProvider _authenticationStateProvider { get; set; }
+    private HttpClient? client;
+    private HttpContextAccessor _httpContextAccessor = new();
 
     protected override void OnInitialized()
     {
+        
         statuses = new();
         requesters = new();
         technicians = new();
@@ -67,7 +76,23 @@ public partial class NewTicket
 
         if (form.IsValid)
         {
-            Snackbar.Add("Submited!");
+
+            string bearerToken = _httpContextAccessor.HttpContext!.Request.Cookies["apiBearerToken"]!;
+            client = _factory.CreateClient("api");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            
+            var claimsIdentity = (ClaimsIdentity) _authenticationStateProvider.GetAuthenticationStateAsync().Result.User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            ticket.CreateId = claim.Value;
+            try
+            {
+                var result = await client!.PostAsJsonAsync<Ticket>("Tickets/Create", ticket);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 }
